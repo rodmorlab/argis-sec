@@ -1,0 +1,22 @@
+services:
+  qwen:
+    image: ghcr.io/ggml-org/llama.cpp:server
+    ports:
+      - "127.0.0.1:6771:6767"
+    volumes:
+      - ./models:/models:ro
+    command:
+      - -m
+      - /models/${CHAT_AI_MODEL_FILE:-Qwen3.5-0.8B-Q8_0.gguf}
+      - --host
+      - 0.0.0.0
+      - --port
+      - "6767"
+      - -c
+      - "8192"
+      - --parallel
+      - "1"
+      - -ngl
+      - "${CHAT_AI_GPU_LAYERS:-0}"
+      - --reasoning
+      - "off"

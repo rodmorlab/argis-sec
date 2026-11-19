@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AegisSecUCSC - Plataforma Empresarial de Consultoría en Ciberseguridad, Desarrollo Web Seguro, DevOps y DevSecOps." />
+  <title>AegisSec Cloud | Plataforma Web Segura & DevSecOps (Certamen Integrador)</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- BARRA SUPERIOR DE SEGURIDAD & ESTADO DEVSECOPS -->
+  <div class="sec-banner">
+    <div class="sec-banner-left">
+      <span class="sec-pill"><span class="dot"></span> HTTPS / TLS 1.3 Activo</span>
+      <span class="sec-pill"><span class="dot"></span> Auth: JWT + Argon2id</span>
+      <span class="sec-pill"><span class="dot"></span> NoSQL: MongoDB Atlas (Least Privilege: <code>app_rw_user</code>)</span>
+    </div>
+    <div class="sec-banner-right">
+      <span id="jwtTimerBadge" class="sec-pill warn">Sesión: Visitante (Sin Token)</span>
+      <button class="btn btn-sm btn-outline" style="padding: 2px 9px; font-size: 11px;" onclick="switchView('devsecops')">
+        Ver Reporte DevSecOps / CI-CD
+      </button>
+    </div>
+  </div>
+
+  <!-- NAVEGACIÓN PRINCIPAL -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand" onclick="switchView('home')">
+        <div class="brand-logo">AS</div>
+        <div class="brand-text">
+          <strong>AegisSec Enterprise</strong>
+          <span>Consultoría Ciberseguridad &amp; DevSecOps</span>
+        </div>
+      </div>
+
+      <ul class="nav-links">
+        <li><button class="nav-btn active" data-view="home" onclick="switchView('home')">Inicio y Servicios</button></li>
+        <li><button class="nav-btn" data-view="reservas" onclick="switchView('reservas')">Mis Solicitudes</button></li>
+        <li><button class="nav-btn" data-view="contacto" onclick="switchView('contacto')">Contacto &amp; SMTP</button></li>
+        <li><button class="nav-btn" data-view="admin" onclick="switchView('admin')">Panel Admin</button></li>
+        <li><button class="nav-btn" data-view="devsecops" onclick="switchView('devsecops')">DevOps &amp; DevSecOps</button></li>
+        <li><button class="nav-btn" data-view="defensa" onclick="switchView('defensa')">Simulador Defensa</button></li>
+      </ul>
+
+      <div class="nav-actions">
+        <span id="currentRoleBadge" class="role-badge guest">Rol: Visitante</span>
+        <button id="btnNavAuth" class="btn btn-sm btn-primary" onclick="switchView('auth')">Iniciar Sesión / Registro</button>
+        <button id="btnNavLogout" class="btn btn-sm btn-danger" style="display:none;" onclick="logoutUser()">Cerrar Sesión</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENEDOR DE NOTIFICACIONES TOAST -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <main>
+
+    <!-- ==========================================
+         VISTA 1: INICIO, CASO DE NEGOCIO Y SERVICIOS
+         ========================================== -->
+    <section id="view-home" class="view-section active">
+      <div class="hero">
+        <div>
+          <span class="hero-kicker">Caso de Negocio · Portal de Servicios y Reservas</span>
+          <h1>Protegemos tu infraestructura crítica con auditoría continua DevSecOps</h1>
+          <p>
+            AegisSec Enterprise brinda servicios de Pentesting Web (OWASP Top 10), automatización de pipelines CI/CD seguros y endurecimiento de bases de datos NoSQL para organizaciones que requieren alta disponibilidad y cumplimiento normativo.
+          </p>
+          <div class="hero-cta">
+            <button class="btn btn-primary" onclick="document.getElementById('catalogoServicios').scrollIntoView()">Explorar Servicios</button>
+            <button class="btn btn-outline" style="background:rgba(255,255,255,0.1);color:#fff;border-color:rgba(255,255,255,0.25);" onclick="switchView('contacto')">Solicitar Cotización</button>
+            <button class="btn btn-outline" style="background:rgba(255,255,255,0.1);color:#fff;border-color:rgba(255,255,255,0.25);" onclick="switchView('defensa')">Guía de Defensa Técnica</button>
+          </div>
+        </div>
+
+        <div class="hero-card">
+          <h3>Arquitectura Activa del Proyecto</h3>
+          <div class="hero-stat-grid">
+            <div class="hero-stat">
+              <strong id="statServicesCount">6</strong>
+              <small>Servicios Activos (CRUD)</small>
+            </div>
+            <div class="hero-stat">
+              <strong>JWT + RBAC</strong>
+              <small>3 Roles con Guardas</small>
+            </div>
+            <div class="hero-stat">
+              <strong>0 Críticas</strong>
+              <small>OWASP ZAP &amp; CodeQL</small>
+            </div>
+            <div class="hero-stat">
+              <strong>99.98%</strong>
+              <small>Uptime HTTPS Hosting</small>
+            </div>
+          </div>
+          <div style="margin-top:14px; font-size:12px; color:#cbd5e1; border-top:1px solid rgba(255,255,255,0.12); padding-top:10px;">
+            <strong>Accesos rápidos para el docente:</strong><br/>
+            Puedes cambiar de rol con 1 clic en la pestaña <em>"Iniciar Sesión"</em> o en <em>"Simulador Defensa"</em>.
+          </div>
+        </div>
+      </div>
+
+      <!-- RESUMEN DEL ALCANCE Y CASO DE NEGOCIO (SECCIÓN 2 DEL CERTAMEN) -->
+      <div class="grid-3" style="margin-bottom: 40px;">
+        <div class="card">
+          <span class="card-tag">1. Problema que resuelve</span>
+          <h3>Gestión Centralizada y Segura</h3>
+          <p>Las empresas suelen gestionar solicitudes de auditoría TI por canales dispersos e inseguros. Esta plataforma unifica el catálogo, reservas de clientes, doble notificación SMTP y atención por Chatbot con control estricto de roles.</p>
+        </div>
+        <div class="card">
+          <span class="card-tag">2. Público Objetivo</span>
+          <h3>Empresas, Bancos y EdTech</h3>
+          <p>Dirigido a líderes técnicos (CTO, CISO) y clientes corporativos que necesitan agendar auditorías DAST/SAST, consultar estado de sus tickets y comunicarse con ejecutivos bajo cifrado TLS.</p>
+        </div>
+        <div class="card">
+          <span class="card-tag">3. Separación de Capas</span>
+          <h3>Cliente · API REST · NoSQL</h3>
+          <p>El cliente valida y sanitiza entradas contra XSS; se conecta mediante <code>apiClient</code> con cabeceras <code>Authorization: Bearer &lt;JWT&gt;</code> hacia Express/Mongoose utilizando privilegios mínimos.</p>
+        </div>
+      </div>
+
+      <!-- CATÁLOGO DINÁMICO DE SERVICIOS -->
+      <div id="catalogoServicios" class="section-head">
+        <div>
+          <span class="kicker">Catálogo de Soluciones (Colección NoSQL: services)</span>
+          <h2>Servicios Profesionales de Ciberseguridad y Cloud</h2>
+          <p>Selecciona un servicio para agendar una sesión técnica. Si eres Administrador, puedes crear, editar o eliminar servicios desde el Panel Admin.</p>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <input type="text" id="searchServiceInput" placeholder="Buscar servicio o categoría..." oninput="renderServices()" style="width: 240px;" />
+        </div>
+      </div>
+
+      <div id="servicesGrid" class="grid-3"></div>
+    </section>
+
+    <!-- ==========================================
+         VISTA 2: MIS SOLICITUDES / RESERVAS (USUARIO REGISTRADO)
+         ========================================== -->
+    <section id="view-reservas" class="view-section">
+      <div class="section-head">
+        <div>
+          <span class="kicker">Ruta Protegida · Requiere Token JWT Válido</span>
+          <h2>Mis Solicitudes y Reservas de Consultoría</h2>
+          <p>Los usuarios autenticados pueden agendar auditorías y dar seguimiento al estado de sus reservas almacenadas en la colección <code>bookings</code>.</p>
+        </div>
+      </div>
+
+      <div id="reservasLockedNotice" class="card" style="background: var(--warning-bg); border-color: #fde68a; margin-bottom: 24px; display: none;">
+        <h3 style="color:#92400e;">Acceso Restringido (HTTP 401 Unauthorized)</h3>
+        <p style="color:#78350f; margin-bottom:12px;">
+          Esta vista requiere un <strong>Token JWT activo</strong> en la cabecera de autorización. Actualmente navegas como <strong>Visitante</strong>.
+        </p>
+        <div>
+          <button class="btn btn-primary btn-sm" onclick="switchView('auth')">Iniciar Sesión o Usar Demo Rápido</button>
+        </div>
+      </div>
+
+      <div id="reservasProtectedContent" class="grid-2">
+        <div class="card">
+          <h3>Agendar Nueva Reserva de Servicio</h3>
+          <p>Completa los detalles de tu requerimiento técnico. Los campos son validados en cliente y servidor.</p>
+          <form id="formNuevaReserva" onsubmit="handleCreateBooking(event)">
+            <div class="form-group">
+              <label>Servicio Solicitado <span class="req">*</span></label>
+              <select id="bookingServiceSelect" required></select>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Fecha Preferida <span class="req">*</span></label>
+                <input type="date" id="bookingDate" required />
+              </div>
+              <div class="form-group">
+                <label>Prioridad SLA <span class="req">*</span></label>
+                <select id="bookingPriority" required>
+                  <option value="Normal">Normal (SLA 48h)</option>
+                  <option value="Alta">Alta (SLA 24h)</option>
+                  <option value="Crítica">Crítica / Incidente Activo</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Alcance Técnico / Dominio Objetivo <span class="req">*</span></label>
+              <textarea id="bookingNotes" rows="3" maxlength="300" required placeholder="Ej. Auditoría sobre subdominio api.empresa.cl y revisión de pipeline GitHub Actions..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">Registrar Solicitud con Firma JWT</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h3>Historial de Mis Solicitudes</h3>
+          <p>Registros vinculados a tu <code>userId</code> extraído del payload del token JWT.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Servicio</th>
+                  <th>Fecha</th>
+                  <th>Prioridad</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody id="userBookingsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         VISTA 3: AUTENTICACIÓN JWT, ROLES Y HASH ARGON2ID
+         ========================================== -->
+    <section id="view-auth" class="view-section">
+      <div class="section-head">
+        <div>
+          <span class="kicker">Sección 4 del Certamen · Autenticación, Autorización y Credenciales</span>
+          <h2>Centro de Autenticación JWT y Protección de Contraseñas</h2>
+          <p>Prueba el inicio de sesión, registro con hash Argon2id en el servidor y explora el contenido decodificado del Token JWT sin exponer secretos.</p>
+        </div>
+      </div>
+
+      <!-- BOTONES DEMO RÁPIDO PARA EVALUACIÓN DOCENTE -->
+      <div class="card" style="margin-bottom: 24px; background: #f8fafc; border-left: 4px solid var(--primary);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h3 style="margin-bottom:4px;">Modo Evaluación Rápida (1 Clic para el Docente)</h3>
+            <p style="margin:0; font-size:13.5px;">Cambia instantáneamente de sesión para verificar permisos RBAC (Administrador, Usuario Registrado o Visitante) o simular expiración de token.</p>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-sm btn-primary" onclick="quickDemoLogin('admin@aegissec.cl')">Entrar como Administrador</button>
+            <button class="btn btn-sm btn-navy" onclick="quickDemoLogin('cliente@empresa.cl')">Entrar como Usuario Registrado</button>
+            <button class="btn btn-sm btn-outline" onclick="forceExpireToken()">Simular Token Expirado (401)</button>
+            <button class="btn btn-sm btn-danger" onclick="logoutUser()">Salir a Visitante</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- FORMULARIOS DE LOGIN Y REGISTRO -->
+        <div class="card">
+          <div class="subtabs">
+            <button class="subtab-btn active" onclick="switchAuthTab('login', this)">Iniciar Sesión (POST /api/auth/login)</button>
+            <button class="subtab-btn" onclick="switchAuthTab('register', this)">Registro Seguro (POST /api/auth/register)</button>
+          </div>
+
+          <!-- TAB LOGIN -->
+          <form id="authLoginForm" class="subtab-panel active" onsubmit="handleLogin(event)">
+            <div class="form-group">
+              <label>Correo Electrónico <span class="req">*</span></label>
+              <input type="email" id="loginEmail" required value="admin@aegissec.cl" />
+            </div>
+            <div class="form-group">
+              <label>Contraseña <span class="req">*</span></label>
+              <input type="password" id="loginPassword" required value="AdminSec2026!" />
+              <div class="field-hint">
+                <span>Demo Admin: <code>admin@aegissec.cl</code> / <code>AdminSec2026!</code></span>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">Autenticar y Emitir JWT</button>
+          </form>
+
+          <!-- TAB REGISTRO -->
+          <form id="authRegisterForm" class="subtab-panel" onsubmit="handleRegister(event)">
+            <div class="form-group">
+              <label>Nombre Completo <span class="req">*</span></label>
+              <input type="text" id="regName" required placeholder="Ej. Camila Rojas" />
+            </div>
+            <div class="form-group">
+              <label>Correo Corporativo <span class="req">*</span></label>
+              <input type="email" id="regEmail" required placeholder="camila@organizacion.cl" />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Contraseña <span class="req">*</span></label>
+                <input type="password" id="regPassword" required minlength="8" oninput="updateLiveHashPreview()" placeholder="Mínimo 8 caracteres" />
+              </div>
+              <div class="form-group">
+                <label>Rol Inicial (Demo RBAC)</label>
+                <select id="regRole">
+                  <option value="usuario">Usuario Registrado</option>
+                  <option value="admin">Administrador</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group" style="background:#f1f5f9; padding:10px 12px; border-radius:8px; font-size:12px;">
+              <strong>Política de Hash Argon2id (m=65536, t=3, p=4):</strong>
+              <div id="liveArgonPreview" style="font-family:monospace; color:var(--primary); margin-top:4px; word-break:break-all;">
+                $argon2id$v=19$m=65536,t=3,p=4$ElHashSeGeneraEnElServidorAlRegistrar...
+              </div>
+              <small style="color:var(--muted);">La contraseña en texto plano jamás se almacena en la base de datos ni en el JWT.</small>
+            </div>
+            <button type="submit" class="btn btn-navy" style="width:100%;">Registrar Usuario con Hash Argon2id</button>
+          </form>
+        </div>
+
+        <!-- INSPECTOR JWT EN TIEMPO REAL -->
+        <div class="card">
+          <h3>Inspector de JSON Web Token (JWT) en Vivo</h3>
+          <p>Verifica cómo se estructura el token activo. El payload contiene únicamente identificadores no sensibles (<code>sub</code>, <code>role</code>, <code>iat</code>, <code>exp</code>).</p>
+          <div class="jwt-box" id="jwtInspectorView">
+            // Inicia sesión para inspeccionar el Header, Payload y Firma HMAC-SHA256
+          </div>
+          <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">
+            <button class="btn btn-sm btn-outline" onclick="renewJwtToken()">Renovar Token (Refresh JWT)</button>
+            <button class="btn btn-sm btn-outline" onclick="testProtectedEndpoint()">Probar Endpoint Privado (/api/admin/audit)</button>
+          </div>
+          <div id="endpointTestResult" style="margin-top:12px; font-size:13px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         VISTA 4: FORMULARIO DE CONTACTO, SMTP Y REDES SOCIALES
+         ========================================== -->
+    <section id="view-contacto" class="view-section">
+      <div class="section-head">
+        <div>
+          <span class="kicker">Sección 6 del Certamen · Comunicación Segura y Nodemailer SMTP</span>
+          <h2>Formulario de Contacto con Doble Despacho de Correo</h2>
+          <p>Valida entradas en cliente y servidor, previene inyección de cabeceras, aplica Rate Limiting (máx. 3 envíos/min), registra en MongoDB y despacha correos tanto al buzón institucional como al cliente.</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Enviar Consulta o Solicitud</h3>
+          <form id="contactForm" onsubmit="handleContactSubmit(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Nombre Completo <span class="req">*</span></label>
+                <input type="text" id="contactName" required maxlength="80" placeholder="Tu nombre y apellido" />
+              </div>
+              <div class="form-group">
+                <label>Correo Electrónico <span class="req">*</span></label>
+                <input type="email" id="contactEmail" required maxlength="100" placeholder="nombre@dominio.cl" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Teléfono (Opcional)</label>
+                <input type="tel" id="contactPhone" maxlength="20" placeholder="+56 9 1234 5678" />
+              </div>
+              <div class="form-group">
+                <label>Asunto <span class="req">*</span></label>
+                <input type="text" id="contactSubject" required maxlength="120" placeholder="Cotización Pentesting / Consultoría" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Mensaje <span class="req">*</span></label>
+              <textarea id="contactMessage" rows="4" required minlength="15" maxlength="500" oninput="updateContactCounter()" placeholder="Describe tu consulta o requerimiento..."></textarea>
+              <div class="field-hint">
+                <span>Sanitización anti-XSS y filtro CRLF activos</span>
+                <span id="contactCharCount">0 / 500 caracteres</span>
+              </div>
+            </div>
+
+            <div class="form-row" style="align-items:center; background:#f8fafc; padding:12px; border-radius:8px; border:1px solid var(--border); margin-bottom:16px;">
+              <div>
+                <label style="margin-bottom:2px;">Verificación Antispam (CAPTCHA) <span class="req">*</span></label>
+                <span id="captchaQuestionText" style="font-size:13px; color:var(--slate); font-weight:700;">¿Cuánto es 4 + 5?</span>
+              </div>
+              <div>
+                <input type="number" id="captchaAnswerInput" required placeholder="Respuesta numérica" />
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width:100%;">Enviar Solicitud y Despachar Correos SMTP</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h3>Evidencia del Flujo de Envío SMTP (Nodemailer)</h3>
+          <p>Al enviar el formulario, el backend almacena el documento en la colección <code>contacts</code> de MongoDB y emite dos mensajes transaccionales:</p>
+
+          <div id="smtpEvidenceContainer" style="display:flex; flex-direction:column; gap:14px;">
+            <div class="mail-preview-box">
+              <div class="mail-header">
+                <strong>1. Correo al Buzón Institucional (Configurado en variable de entorno <code>INSTITUTIONAL_INBOX</code>)</strong><br/>
+                De: <code>no-reply@aegissec.cl</code> · Para: <code>contacto@aegissec.cl</code> (Fijo en servidor, no manipulable)
+              </div>
+              <div id="mailPreviewInstitutional" style="color:var(--slate);">
+                <em>Completa y envía el formulario para visualizar el correo institucional generado...</em>
+              </div>
+            </div>
+
+            <div class="mail-preview-box">
+              <div class="mail-header">
+                <strong>2. Correo de Confirmación Automática al Cliente</strong><br/>
+                De: <code>AegisSec Soporte &lt;no-reply@aegissec.cl&gt;</code> · Para: <code id="mailClientRecipient">cliente@correo.cl</code>
+              </div>
+              <div id="mailPreviewClient" style="color:var(--slate);">
+                <em>Completa y envía el formulario para visualizar el acuse de recibo enviado al visitante...</em>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         VISTA 5: PANEL ADMINISTRATIVO (RBAC: SOLO ADMIN)
+         ========================================== -->
+    <section id="view-admin" class="view-section">
+      <div class="section-head">
+        <div>
+          <span class="kicker">Secciones 4, 5, 6.3 y 7 · Gobernanza y Administración Centralizada</span>
+          <h2>Panel Administrativo &amp; Gestión NoSQL (MongoDB)</h2>
+          <p>Exclusivo para el rol <strong>Administrador</strong>. Permite gestionar usuarios, servicios, solicitudes de contacto, enlaces de redes sociales, reglas del chatbot y respaldos de la base de datos.</p>
+        </div>
+      </div>
+
+      <!-- AVISO DE BLOQUEO SI NO ES ADMIN (403 FORBIDDEN) -->
+      <div id="adminForbiddenNotice" class="card" style="background: var(--danger-bg); border-color: #fecaca; display:none;">
+        <h3 style="color:#991b1b;">Acceso Denegado · HTTP 403 Forbidden (Control de Acceso Basado en Roles)</h3>
+        <p style="color:#7f1d1d; margin-bottom:14px;">
+          El middleware <code>verifyRole(['admin'])</code> rechazó la petición porque tu sesión actual no posee privilegios de Administrador. Esto demuestra protección contra <em>Broken Access Control (OWASP A01)</em>.
+        </p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn btn-primary btn-sm" onclick="quickDemoLogin('admin@aegissec.cl')">Activar Rol Administrador (Demo Docente)</button>
+          <button class="btn btn-outline btn-sm" onclick="switchView('auth')">Ir a Autenticación</button>
+        </div>
+      </div>
+
+      <!-- CONTENIDO DEL PANEL ADMIN -->
+      <div id="adminProtectedContent">
+        <div class="subtabs">
+          <button class="subtab-btn active" onclick="switchAdminTab('users', this)">1. Usuarios &amp; Hashes</button>
+          <button class="subtab-btn" onclick="switchAdminTab('services', this)">2. CRUD Servicios</button>
+          <button class="subtab-btn" onclick="switchAdminTab('contacts', this)">3. Bandeja Contactos &amp; Reservas</button>
+          <button class="subtab-btn" onclick="switchAdminTab('socials', this)">4. Redes Sociales</button>
+          <button class="subtab-btn" onclick="switchAdminTab('chatbot', this)">5. Reglas del Chatbot</button>
+          <button class="subtab-btn" onclick="switchAdminTab('nosql', this)">6. MongoDB Atlas &amp; Backup</button>
+        </div>
+
+        <!-- SUBTAB 1: USUARIOS -->
+        <div id="admin-tab-users" class="subtab-panel active">
+          <div class="card">
+            <h3>Gestión de Usuarios y Roles (Colección <code>users</code>)</h3>
+            <p>Las contraseñas se almacenan con hash Argon2id. La API excluye el campo <code>passwordHash</code> en consultas públicas y aquí se muestra truncado solo para verificación académica del certamen.</p>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID Documento</th>
+                    <th>Nombre</th>
+                    <th>Email (Índice Único)</th>
+                    <th>Rol RBAC</th>
+                    <th>Evidencia Hash Argon2id</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="adminUsersTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUBTAB 2: CRUD SERVICIOS -->
+        <div id="admin-tab-services" class="subtab-panel">
+          <div class="grid-2">
+            <div class="card">
+              <h3>Crear / Editar Servicio</h3>
+              <form id="adminServiceForm" onsubmit="handleSaveService(event)">
+                <input type="hidden" id="srvEditId" />
+                <div class="form-group">
+                  <label>Título del Servicio <span class="req">*</span></label>
+                  <input type="text" id="srvTitle" required placeholder="Ej. Auditoría DevSecOps en Kubernetes" />
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Categoría <span class="req">*</span></label>
+                    <input type="text" id="srvCategory" required placeholder="Ej. Pentesting / Cloud" />
+                  </div>
+                  <div class="form-group">
+                    <label>Precio Referencial <span class="req">*</span></label>
+                    <input type="text" id="srvPrice" required placeholder="Ej. 45 UF" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Descripción Técnica <span class="req">*</span></label>
+                  <textarea id="srvDesc" rows="3" required></textarea>
+                </div>
+                <div style="display:flex; gap:10px;">
+                  <button type="submit" class="btn btn-primary">Guardar en MongoDB</button>
+                  <button type="button" class="btn btn-outline" onclick="resetServiceForm()">Limpiar</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="card">
+              <h3>Servicios Registrados</h3>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Servicio</th>
+                      <th>Categoría</th>
+                      <th>Precio</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminServicesTable"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUBTAB 3: CONTACTOS Y RESERVAS -->
+        <div id="admin-tab-contacts" class="subtab-panel">
+          <div class="grid-2">
+            <div class="card">
+              <h3>Mensajes del Formulario de Contacto (<code>contacts</code>)</h3>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Fecha</th>
+                      <th>Remitente</th>
+                      <th>Asunto &amp; Mensaje</th>
+                      <th>SMTP</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminContactsTable"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3>Solicitudes de Reserva (<code>bookings</code>)</h3>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Cliente</th>
+                      <th>Servicio</th>
+                      <th>Estado</th>
+                      <th>Cambiar</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminBookingsTable"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUBTAB 4: REDES SOCIALES ADMINISTRABLES -->
+        <div id="admin-tab-socials" class="subtab-panel">
+          <div class="grid-2">
+            <div class="card">
+              <h3>Agregar o Editar Red Social Oficial</h3>
+              <p>Sección 6.3: Agrega, edita, activa o desactiva enlaces sociales sin modificar el código fuente. Se abren en el pie de página con <code>rel="noopener noreferrer"</code>.</p>
+              <form id="adminSocialForm" onsubmit="handleSaveSocial(event)">
+                <input type="hidden" id="socEditId" />
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Plataforma <span class="req">*</span></label>
+                    <select id="socNetwork" required>
+                      <option value="LinkedIn">LinkedIn</option>
+                      <option value="Instagram">Instagram</option>
+                      <option value="Facebook">Facebook</option>
+                      <option value="TikTok">TikTok</option>
+                      <option value="WhatsApp Business">WhatsApp Business</option>
+                      <option value="GitHub">GitHub</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Estado</label>
+                    <select id="socActive">
+                      <option value="true">Activo (Visible en Footer)</option>
+                      <option value="false">Inactivo (Oculto)</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>URL Oficial (Debe iniciar con https://) <span class="req">*</span></label>
+                  <input type="url" id="socUrl" required placeholder="https://www.linkedin.com/company/aegissec" />
+                </div>
+                <button type="submit" class="btn btn-primary">Guardar Enlace Social</button>
+              </form>
+            </div>
+
+            <div class="card">
+              <h3>Perfiles Sociales Configurados (<code>socials</code>)</h3>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Red Social</th>
+                      <th>URL Validada</th>
+                      <th>Estado</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminSocialsTable"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUBTAB 5: CHATBOT ADMINISTRABLE -->
+        <div id="admin-tab-chatbot" class="subtab-panel">
+          <div class="grid-2">
+            <div class="card">
+              <h3>Crear / Editar Regla de Respuesta del Chatbot</h3>
+              <p>Sección 7: Administra las preguntas frecuentes del chatbot desde MongoDB sin tocar el código.</p>
+              <form id="adminFaqForm" onsubmit="handleSaveFaq(event)">
+                <input type="hidden" id="faqEditId" />
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Categoría / Botón Rápido <span class="req">*</span></label>
+                    <input type="text" id="faqCategory" required placeholder="Ej. Horarios, Precios, Seguridad" />
+                  </div>
+                  <div class="form-group">
+                    <label>Palabras Clave (separadas por coma) <span class="req">*</span></label>
+                    <input type="text" id="faqKeywords" required placeholder="precio, costo, cotizar, tarifa" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Pregunta Frecuente <span class="req">*</span></label>
+                  <input type="text" id="faqQuestion" required placeholder="¿Cuáles son los valores de una auditoría web?" />
+                </div>
+                <div class="form-group">
+                  <label>Respuesta Oficial del Chatbot <span class="req">*</span></label>
+                  <textarea id="faqAnswer" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Guardar Regla en MongoDB</button>
+              </form>
+            </div>
+
+            <div class="card">
+              <h3>Base de Conocimiento del Chatbot (<code>chatbot_faqs</code>)</h3>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Categoría</th>
+                      <th>Pregunta</th>
+                      <th>Estado</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminFaqsTable"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUBTAB 6: MONGODB ATLAS, ÍNDICES Y BACKUP -->
+        <div id="admin-tab-nosql" class="subtab-panel">
+          <div class="grid-2">
+            <div class="card">
+              <h3>Configuración de Mínimo Privilegio e Índices NoSQL</h3>
+              <p>Sección 5: La aplicación se conecta mediante un usuario específico (<code>aegis_app_rw</code>) restringido a <code>readWrite</code> sobre la base de datos del proyecto, sin rol <code>atlasAdmin</code>.</p>
+              <div class="jwt-box" style="margin-bottom:14px;">
+// Configuración de Usuario MongoDB Atlas (Principio de Mínimo Privilegio)
+{
+  "dbUser": "aegis_app_rw",
+  "databaseName": "aegissec_prod_db",
+  "roles": [
+    { "roleName": "readWrite", "databaseName": "aegissec_prod_db" }
+  ],
+  "ipAccessList": ["Render_Outbound_IPs_Only"],
+  "indexes": [
+    "users: { email: 1 } (unique: true)",
+    "bookings: { userId: 1, createdAt: -1 }",
+    "contacts: { createdAt: -1 }",
+    "chatbot_faqs: { active: 1, category: 1 }"
+  ]
+}
+              </div>
+              <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button class="btn btn-primary btn-sm" onclick="exportNoSqlBackup()">Exportar Backup JSON (mongodump / export)</button>
+                <button class="btn btn-outline btn-sm" onclick="restoreDefaultDatabase()">Restaurar Semilla Original (Seed)</button>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3>Explorador en Vivo de Colecciones NoSQL</h3>
+              <div class="form-group">
+                <label>Seleccionar Colección a Consultar:</label>
+                <select id="nosqlCollectionSelector" onchange="renderNoSqlExplorer()">
+                  <option value="users">users (Usuarios y Roles)</option>
+                  <option value="services">services (Catálogo de Servicios)</option>
+                  <option value="bookings">bookings (Reservas de Clientes)</option>
+                  <option value="contacts">contacts (Consultas Formulario)</option>
+                  <option value="socials">socials (Enlaces Redes Sociales)</option>
+                  <option value="chatbot_faqs">chatbot_faqs (Reglas del Chatbot)</option>
+                  <option value="chatbot_logs">chatbot_logs (Historial Conversaciones)</option>
+                </select>
+              </div>
+              <div id="nosqlJsonViewer" class="jwt-box" style="max-height: 290px; overflow-y: auto;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         VISTA 6: DEVOPS, CI/CD Y ANÁLISIS DEVSECOPS (SECCIONES 8, 9 Y 10)
+         ========================================== -->
+    <section id="view-devsecops" class="view-section">
+      <div class="section-head">
+        <div>
+          <span class="kicker">Secciones 8, 9 y 10 · Automatización CI/CD, Escaneo y Remediación</span>
+          <h2>Centro de Operaciones DevOps &amp; Auditoría DevSecOps</h2>
+          <p>Evidencia técnica del pipeline en GitHub Actions, integración de controles SAST/DAST/SCA y comparativa de vulnerabilidades detectadas, corregidas y verificadas.</p>
+        </div>
+        <button class="btn btn-primary" onclick="runSimulatedPipeline()">Ejecutar Simulación de Pipeline CI/CD + Escaneo</button>
+      </div>
+
+      <!-- FLUJO DEL PIPELINE CI/CD -->
+      <div class="card" style="margin-bottom: 24px;">
+        <h3>Flujo Automatizado GitHub Actions (CI/CD + Umbral de Seguridad)</h3>
+        <p>Si una prueba unitaria falla o <code>npm audit</code> / <code>CodeQL</code> detecta una vulnerabilidad de severidad <strong>Alta o Crítica</strong>, el pipeline bloquea automáticamente el despliegue a producción.</p>
+        <div id="pipelineStagesGrid" class="grid-3" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:12px;">
+          <div class="card" style="padding:14px; background:#f8fafc;">
+            <span class="badge badge-success" style="width:fit-content; margin-bottom:6px;">STAGE 1 · PASS</span>
+            <strong>1. Git &amp; Build</strong>
+            <small style="color:var(--muted);">Checkout rama <code>main</code>, <code>npm ci</code>, compilación y linter.</small>
+          </div>
+          <div class="card" style="padding:14px; background:#f8fafc;">
+            <span class="badge badge-success" style="width:fit-content; margin-bottom:6px;">STAGE 2 · PASS</span>
+            <strong>2. SAST (CodeQL)</strong>
+            <small style="color:var(--muted);">Análisis estático de código JS/TS sin inyecciones NoSQL.</small>
+          </div>
+          <div class="card" style="padding:14px; background:#f8fafc;">
+            <span class="badge badge-success" style="width:fit-content; margin-bottom:6px;">STAGE 3 · PASS</span>
+            <strong>3. SCA (npm audit / Snyk)</strong>
+            <small style="color:var(--muted);">0 vulnerabilidades críticas o altas en paquetes Node.js.</small>
+          </div>
+          <div class="card" style="padding:14px; background:#f8fafc;">
+            <span class="badge badge-success" style="width:fit-content; margin-bottom:6px;">STAGE 4 · PASS</span>
+            <strong>4. DAST (OWASP ZAP)</strong>
+            <small style="color:var(--muted);">Escaneo dinámico sobre staging: cabeceras Helmet y CSP OK.</small>
+          </div>
+          <div class="card" style="padding:14px; background:#f8fafc;">
+            <span class="badge badge-success" style="width:fit-content; margin-bottom:6px;">STAGE 5 · DEPLOYED</span>
+            <strong>5. Hosting HTTPS</strong>
+            <small style="color:var(--muted);">Publicación en Render/Vercel con variables de entorno seguras.</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- TABLA COMPARATIVA DE VULNERABILIDADES (ANTES VS DESPUÉS) -->
+      <div class="card">
+        <h3>Informe Comparativo de Vulnerabilidades (Antes vs. Después de la Remediación)</h3>
+        <p>Requisito 9.3: Registro de hallazgos iniciales, herramienta detectora, nivel de riesgo, corrección técnica aplicada y resultado de verificación posterior.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID / Riesgo OWASP</th>
+                <th>Herramienta</th>
+                <th>Componente Afectado</th>
+                <th>Severidad Inicial</th>
+                <th>Hallazgo Inicial (Antes)</th>
+                <th>Corrección Técnica Implementada</th>
+                <th>Verificación Posterior (Después)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>A05: Security Misconfiguration</strong></td>
+                <td>OWASP ZAP (DAST)</td>
+                <td>Cabeceras HTTP Express</td>
+                <td><span class="badge badge-warn">Media</span></td>
+                <td>Ausencia de <code>Content-Security-Policy</code>, <code>X-Frame-Options</code> y exposición de <code>X-Powered-By: Express</code>.</td>
+                <td>Integración de middleware <code>helmet()</code> con directiva CSP estricta y <code>app.disable('x-powered-by')</code>.</td>
+                <td><span class="badge badge-success">Resuelto (0 Alertas ZAP)</span></td>
+              </tr>
+              <tr>
+                <td><strong>A03: Injection (NoSQL / XSS)</strong></td>
+                <td>GitHub CodeQL (SAST)</td>
+                <td>Endpoint Login &amp; Contacto</td>
+                <td><span class="badge badge-danger">Alta</span></td>
+                <td>Posible inyección de operadores MongoDB (<code>{"$gt": ""}</code>) en body JSON y falta de escape HTML.</td>
+                <td>Implementación de <code>express-mongo-sanitize</code>, esquemas <code>express-validator</code> y escape de caracteres HTML.</td>
+                <td><span class="badge badge-success">Resuelto (Verificado CodeQL)</span></td>
+              </tr>
+              <tr>
+                <td><strong>A07: Auth Failures</strong></td>
+                <td>Auditoría Interna / ZAP</td>
+                <td>POST <code>/api/auth/login</code> y SMTP</td>
+                <td><span class="badge badge-danger">Alta</span></td>
+                <td>Ausencia de límite de intentos permitía fuerza bruta sobre credenciales y abuso de envío de correos.</td>
+                <td>Configuración de <code>express-rate-limit</code> (máx. 5 intentos auth / 15 min) y desafío CAPTCHA en contacto.</td>
+                <td><span class="badge badge-success">Resuelto (HTTP 429 Activo)</span></td>
+              </tr>
+              <tr>
+                <td><strong>A06: Vulnerable Components</strong></td>
+                <td>npm audit / Snyk (SCA)</td>
+                <td><code>package-lock.json</code></td>
+                <td><span class="badge badge-warn">Media</span></td>
+                <td>Dependencia transitiva desactualizada con alerta de ReDoS en validación de expresiones regulares.</td>
+                <td>Ejecución de actualización controlada de paquetes y bloqueo en CI con <code>npm audit --audit-level=high</code>.</td>
+                <td><span class="badge badge-success">0 Vulnerabilidades</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         VISTA 7: SIMULADOR DE DEFENSA TÉCNICA (12 ESCENARIOS DEL CERTAMEN)
+         ========================================== -->
+    <section id="view-defensa" class="view-section">
+      <div class="section-head">
+        <div>
+          <span class="kicker">Sección 12 y 13 del Certamen · Demostración Práctica Guiada</span>
+          <h2>Asistente Interactivo para la Defensa Técnica (12 Escenarios)</h2>
+          <p>Durante la defensa, el docente puede solicitar demostrar cualquiera de estos 12 puntos. Haz clic en cada botón para ejecutar o navegar directamente a la evidencia funcional.</p>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <span class="card-tag">Escenario 1 y 2</span>
+          <h3>Registro, Hash Argon2id y Login JWT</h3>
+          <p>Demuestra que la contraseña nunca se guarda en texto plano y cómo se firma el JWT con expiración.</p>
+          <div class="card-footer">
+            <button class="btn btn-sm btn-primary" onclick="switchView('auth')">Ir al Inspector Auth/JWT</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <span class="card-tag">Escenario 3</span>
+          <h3>Ruta Protegida sin Token (401)</h3>
+          <p>Cierra sesión e intenta abrir "Mis Solicitudes" para demostrar el bloqueo de ruta privada sin token.</p>
+          <div class="card-footer">
+            <button class="btn btn-sm btn-outline" onclick="logoutUser(); switchView('reservas');">Simular Acceso sin Token</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <span class="card-tag">Escenario 4</span>
+          <h3>Panel Admin sin Permisos (403)</h3>
+          <p>Ingresa como "Usuario Registrado" e intenta abrir el Panel Admin para comprobar el control RBAC.</p>
+          <div class="card-footer">
+            <button class="btn btn-sm btn-outline" onclick="quickDemoLogin('cliente@empresa.cl'); switchView('admin');">Simular Usuario sin Rol Admin</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <span class="card-tag">Escenario 5</span>
+          <h3>Estructura y Backup NoSQL</h3>
+          <p>Muestra colecciones, índices, usuario de mínimo privilegio y exportación JSON de MongoDB.</p>
+          <div class="card-footer">
+            <button class="btn btn-sm btn-primary" onclick="quickDemoLogin('admin@aegissec.cl'); switchView('admin'); switchAdminTab('nosql', document.querySelectorAll('#view-admin .subtab-btn')[5]);">Abrir Consola MongoDB</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <span class="card-tag">Escenario 6</span>
+          <h3>Formulario y Doble Correo SMTP</h3>
+          <p>Envía una consulta y comprueba su registro en BD junto con el correo institucional y copia al cliente.</p>
+          <div class="card-footer">
+            <button class="btn btn-sm btn-primary" onclick="switchView('contacto')">Probar Formulario y SMTP</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <span class="card-tag">Escenario 7 y 8</span>
+          <h3>Redes Sociales y Chatbot Dinámico</h3>
+          <p>Activa/desactiva redes sociales del footer o agrega respuestas al chatbot sin tocar el código fuente.</p>
+          <div class="card-footer">
+            <button class="btn btn-sm btn-primary" onclick="quickDemoLogin('admin@aegissec.cl'); switchView('admin'); switchAdminTab('socials', document.querySelectorAll('#view-admin .subtab-btn')[3]);">Gestionar Redes y Chatbot</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================
+       CHATBOT FLOTANTE DE ATENCIÓN AL CLIENTE (SECCIÓN 7)
+       ========================================== -->
+  <button class="chatbot-fab" onclick="toggleChatbot()">
+    <span>💬 Asistente AegisBot</span>
+  </button>
+
+  <div id="chatbotWindow" class="chatbot-window" aria-label="Chatbot de atención al cliente">
+    <div class="chat-header">
+      <div>
+        <strong>AegisBot · Atención en Línea</strong>
+        <small>Respuestas desde MongoDB · Protección Anti-Spam</small>
+      </div>
+      <button class="btn btn-sm btn-outline" style="padding:3px 8px; background:transparent; color:#fff; border-color:rgba(255,255,255,0.3);" onclick="toggleChatbot()">✕</button>
+    </div>
+
+    <div id="chatMessages" class="chat-messages"></div>
+
+    <div class="chat-mode-controls">
+      <button type="button" id="chatDetailsButton" class="chip-btn" onclick="setChatDetails(true)">Necesito detalles</button>
+      <button type="button" class="chip-btn" onclick="toggleChatbot(); switchView('contacto')">Hablar con un ejecutivo</button>
+      <button type="button" id="chatQuickButton" class="chip-btn" onclick="setChatDetails(false)" hidden>Volver a preguntas rápidas</button>
+    </div>
+    <div id="chatDetailsMessages" class="chat-messages" hidden aria-live="polite"></div>
+    <div id="chatQuickCategories" class="chat-quick-chips"></div>
+
+    <form class="chat-input-bar" onsubmit="handleChatSubmit(event)">
+      <input type="text" id="chatUserInput" maxlength="180" placeholder="Escribe tu consulta o elige una opción..." required />
+      <button type="submit" class="btn btn-sm btn-primary">Enviar</button>
+    </form>
+  </div>
+
+  <!-- ==========================================
+       FOOTER CON REDES SOCIALES DINÁMICAS (SECCIÓN 6.3)
+       ========================================== -->
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <strong style="color:#fff; font-size:16px;">AegisSec Enterprise · Plataforma Web Segura y DevSecOps</strong>
+        <p style="font-size:12.5px; margin-top:4px;">
+          Certamen Práctico Integrador · Node.js + Express · JWT · Argon2id · MongoDB Atlas · CI/CD · OWASP ZAP
+        </p>
+      </div>
+
+      <div>
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px; color:#cbd5e1;">
+          Canales Oficiales (Administrables desde el Panel)
+        </div>
+        <div id="footerSocialLinks" class="social-links-bar"></div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="runtime-config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
