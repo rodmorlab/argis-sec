@@ -19,3 +19,6 @@ Thumbs.db
 
 # Pesos locales de inferencia
 backend/models/*.gguf
+
+# Salida estática de Vercel
+/dist/
